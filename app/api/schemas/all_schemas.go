@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-//структура ввода и вывода данных при создании пользователя 
+//структуры для пользователя
 type CreateUserRequest struct {
 	Name string `json:"name" binding:"required"`
 	LastName string `json:"lastname" binding:"required"`
@@ -18,7 +18,7 @@ type ResponseUser struct {
 	CreatedAt string `json:"created_at"`
 }
 
-//структура для создания задачи
+//структуры для задач
 type CreateTask struct {
 	Title string `json:"title" binding:"required"`
 	Data time.Time `json:"data" binding:"required"`
@@ -33,6 +33,10 @@ type ResponseTask struct {
 	CreatedAt string `json:"created_at"`
 }
 
+type UpdateTask struct {
+	Title string `json:"title"`
+	Data time.Time `json:"data"`
+}
 //
 type JsonResponse struct {
 	Status int
