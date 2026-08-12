@@ -12,7 +12,7 @@ import (
 func CreateUser(c *gin.Context) {
 	var req schemas.CreateUserRequest
 	if err := c.ShouldBind(&req); err != nil {
-		schemas.ResponseJSON(c, http.StatusBadRequest, "Invailed input", nil)
+		schemas.ResponseJSON(c, http.StatusBadRequest, "Invailed input", err)
 		return
 	}
 
@@ -22,8 +22,9 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 	data := db.User{
-		Name: req.Name,
-		LastName: req.LastName,
+		Login: req.Login,
+		//Name: req.Name,
+		//LastName: req.LastName,
 		Password: password,
 	}
 	if err := db.DB.Create(&data).Error; err != nil {
@@ -32,13 +33,37 @@ func CreateUser(c *gin.Context) {
 
 	user_data := schemas.ResponseUser{
 		ID: data.ID,
-		Name: data.Name,
-		LastName: data.LastName,
+		Login: data.Login,
+		//Name: data.Name,
+		//LastName: data.LastName,
 		CreatedAt: data.CreatedAt.Format(time.RFC3339),
 	}
 	schemas.ResponseJSON(c, http.StatusOK, "The user was successfully created:", user_data)
 }
 
+func LoginUser(c *gin.Context) {
+	var req schemas.LoginUser
+	if err := c.ShouldBind(&req); err != nil {
+		schemas.ResponseJSON(c, http.StatusBadRequest, "Invalid input", err)
+		return
+	}
+
+	current_user := db.User{Login: req.Login} //Name: req.Name, LastName: req.LastName
+	if err := db.DB.First(&current_user).Error; err != nil {
+		schemas.ResponseJSON(c, http.StatusNotFound, "User is not found", err)
+		return
+	}
+
+	token, err := security.GenerateToken(current_user.ID)
+	if err != nil {
+		schemas.ResponseJSON(c, http.StatusInternalServerError, "Unable to create a token", err)
+		return
+	}
+	data := schemas.ResponseToken{
+		Token: token,
+	}
+	schemas.ResponseJSON(c, http.StatusOK, "Successful entry!", data)
+}
 
 func GetUserID(c *gin.Context) {
 	var current_user db.User
@@ -48,8 +73,9 @@ func GetUserID(c *gin.Context) {
 	}
 	user_data := schemas.ResponseUser{
 		ID: current_user.ID,
-		Name: current_user.Name,
-		LastName: current_user.LastName,
+		Login: current_user.Login,
+		//Name: current_user.Name,
+		//LastName: current_user.LastName,
 		CreatedAt: current_user.CreatedAt.Format(time.RFC3339),
 	}
 	schemas.ResponseJSON(c, http.StatusOK, "The user was successfully found", user_data)

@@ -12,7 +12,7 @@ var DB *gorm.DB
 func InitDB() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Faild to connerct to database: ", err)
+		log.Fatal("Faild to connect to database: ", err)
 	}
 
 	dsn := os.Getenv("DB_URL")

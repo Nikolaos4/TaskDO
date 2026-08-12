@@ -6,8 +6,9 @@ import (
 
 type User struct {
 	gorm.Model
-	Name string `gorm:"name"`
-	LastName string `gorm:"lastname"`
+	Login string `gorm:"login"`
+	//Name string `gorm:"name"`
+	//LastName string `gorm:"lastname"`
 	Password string `gorm:"password"`
 	Tasks []Task `gorm:"foreignKey:UserID"`
 }

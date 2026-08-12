@@ -6,17 +6,29 @@ import (
 
 //структуры для пользователя
 type CreateUserRequest struct {
-	Name string `json:"name" binding:"required"`
-	LastName string `json:"lastname" binding:"required"`
+	Login string `json:"login" binding:"required"`
+	//Name string `json:"name" binding:"required"`
+	//LastName string `json:"lastname" binding:"required"`
 	Password string `json:"password" binding:"required,min=6"`
 }
 
+type LoginUser struct {
+	Login string `json:"login" binding:"required"`
+	//Name string `json:"name" binding:"required"`
+	//LastName string `json:"lastname" binding:"required"`
+	Password string `json:"password" binding:"required,min=6"`
+}
 type ResponseUser struct {
 	ID uint `json:"id"`
-	Name string `json:"name"`
-	LastName string `json:"last_name"`
+	Login string `json:"login"`
+	//Name string `json:"name"`
+	//LastName string `json:"last_name"`
 	CreatedAt string `json:"created_at"`
 }
+type ResponseToken struct {
+	Token string `json:"token"`
+}
+
 
 //структуры для задач
 type CreateTask struct {
@@ -37,6 +49,9 @@ type UpdateTask struct {
 	Title string `json:"title"`
 	Data time.Time `json:"data"`
 }
+
+
+
 //
 type JsonResponse struct {
 	Status int
