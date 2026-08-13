@@ -1,6 +1,7 @@
 package security
 
 import (
+	"fmt"
 	"os"
 	"time"
 	"github.com/golang-jwt/jwt/v5"
@@ -16,6 +17,10 @@ func Password_hashing(password string) (string, error){
 	return string(hash), nil
 }
 
+func Password_checking(hashpassword, password string) (bool){
+	marker := bcrypt.CompareHashAndPassword([]byte(hashpassword), []byte(password))
+	return (marker == nil)
+}
 
 //работа с токеном
 func GenerateToken(userID uint) (string, error) {
@@ -32,5 +37,15 @@ func GenerateToken(userID uint) (string, error) {
 	return token, nil
 }
 
-
-
+func VarifyToken(token string) error{
+	tok, err := jwt.Parse(token, func(Token *jwt.Token) (interface{}, error){
+		return []byte(os.Getenv("SECRET_KEY")), nil
+	})
+	if err != nil {
+		return err
+	}
+	if !tok.Valid {
+		return fmt.Errorf("invalid token")
+	}
+	return nil
+}	
