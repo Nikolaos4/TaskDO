@@ -15,12 +15,12 @@ func AuthenticateMiddleware(c *gin.Context) {
 		return
 	}
 	token := tokenstring[7:]
-	err := security.VarifyToken(token)
+	claims, err := security.VarifyToken(token)
 	if err != nil {
 		schemas.ResponseJSON(c, http.StatusUnauthorized, "Invalid or expired token", err)
 		c.Abort()
 		return
 	}
-
+	c.Set("UserID", claims["sub"])
 	c.Next()
 }

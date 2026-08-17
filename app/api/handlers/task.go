@@ -15,10 +15,12 @@ func CreateTask(c *gin.Context) {
 		schemas.ResponseJSON(c, http.StatusBadRequest, "Invalid input", err)
 		return
 	}
+	user_id_interface, _ := c.Get("UserID")
+	UserId := uint(user_id_interface.(float64))
 	data := db.Task{
 		Title:  req.Title,
 		Data:   req.Data,
-		UserID: req.UserID,
+		UserID: UserId,
 	}
 
 	if err := db.DB.Create(&data).Error; err != nil {
@@ -50,6 +52,17 @@ func GetTask(c *gin.Context) {
 		CreatedAt: current_task.CreatedAt.Format(time.RFC3339),
 	}
 	schemas.ResponseJSON(c, http.StatusOK, "The task was successfully found", current_data)
+}
+
+func GetUserTasks(c *gin.Context) {
+	var all_tasks []db.Task
+	user_id_interface, _ := c.Get("UserID")
+	UserId := uint(user_id_interface.(float64))
+	if err := db.DB.Where("user_id = ?", UserId).Find(&all_tasks).Error; err != nil {
+		schemas.ResponseJSON(c, http.StatusNotFound, "Error receiving data", err)
+		return 
+	}
+	schemas.ResponseJSON(c, http.StatusOK, "all tasks:", all_tasks)
 }
 
 func UpdateTask(c *gin.Context) {

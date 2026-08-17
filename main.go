@@ -17,6 +17,7 @@ func main() {
 
 	//для работы с задачами
 	r.GET("/task/:id", midleware.AuthenticateMiddleware, handlers.GetTask)
+	r.GET("/task/all_tasks", midleware.AuthenticateMiddleware, handlers.GetUserTasks)
 	r.POST("/task/create", midleware.AuthenticateMiddleware, handlers.CreateTask)
 	r.PUT("/task/:id", midleware.AuthenticateMiddleware, handlers.UpdateTask)
 	r.DELETE("/task/:id", midleware.AuthenticateMiddleware, handlers.DeleteTask)

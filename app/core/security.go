@@ -37,15 +37,16 @@ func GenerateToken(userID uint) (string, error) {
 	return token, nil
 }
 
-func VarifyToken(token string) error{
+func VarifyToken(token string) (jwt.MapClaims, error){
 	tok, err := jwt.Parse(token, func(Token *jwt.Token) (interface{}, error){
 		return []byte(os.Getenv("SECRET_KEY")), nil
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if !tok.Valid {
-		return fmt.Errorf("invalid token")
+		return nil, fmt.Errorf("invalid token")
 	}
-	return nil
+	claims := tok.Claims.(jwt.MapClaims) 
+	return claims, nil
 }	
